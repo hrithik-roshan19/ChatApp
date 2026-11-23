@@ -32,7 +32,7 @@ import { ROUTES } from '../../utils/constants.js';
 const GENERIC_AUTH_ERROR = 'Invalid email or password';
 
 const LoginPage = () => {
-  const { login } = useAuth();
+  const { login, authError } = useAuth();
   const location = useLocation();
   const emailId = useId();
   const passwordId = useId();
@@ -109,6 +109,8 @@ const LoginPage = () => {
         nextFormError = data?.message || 'Account is not allowed to sign in';
       } else if (status === 429) {
         nextFormError = 'Too many attempts. Please try again in a moment.';
+      } else if (!error?.response) {
+        nextFormError = 'Unable to reach the server. Check your connection and try again.';
       } else {
         nextFormError = data?.message || 'Something went wrong. Please try again.';
       }
@@ -152,6 +154,14 @@ const LoginPage = () => {
         aria-describedby={formError ? formErrorId : undefined}
         className="space-y-4"
       >
+        {authError ? (
+          <div
+            role="alert"
+            className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800 dark:border-amber-900/60 dark:bg-amber-950/40 dark:text-amber-300"
+          >
+            {authError}
+          </div>
+        ) : null}
         {formError ? (
           <div
             id={formErrorId}

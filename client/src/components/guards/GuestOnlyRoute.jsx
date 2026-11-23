@@ -1,7 +1,6 @@
 import { Navigate, Outlet } from 'react-router-dom';
 
 import { useAuth } from '../../contexts/AuthContext.jsx';
-import Spinner from '../common/Spinner.jsx';
 
 /**
  * GuestOnlyRoute — inverse of ProtectedRoute.
@@ -15,12 +14,11 @@ import Spinner from '../common/Spinner.jsx';
  * valid token doesn't briefly render the form before bouncing.
  */
 const GuestOnlyRoute = () => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated } = useAuth();
 
-  if (loading) {
-    return <Spinner fullPage size="lg" />;
-  }
-
+  // A stale/expired token must not prevent the login and register pages
+  // from rendering. AuthContext verifies it in the background and will
+  // redirect to /chat only after `/auth/me` succeeds.
   if (isAuthenticated) {
     return <Navigate to="/chat" replace />;
   }

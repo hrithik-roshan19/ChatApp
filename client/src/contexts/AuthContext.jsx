@@ -59,6 +59,7 @@ export const AuthProvider = ({ children }) => {
   // guards check this so we don't redirect a logged-in user to /login
   // during the half-second it takes the server to reply.
   const [loading, setLoading] = useState(Boolean(readToken()));
+  const [authError, setAuthError] = useState('');
 
   const bootstrappedRef = useRef(false);
 
@@ -82,6 +83,7 @@ export const AuthProvider = ({ children }) => {
       writeToken(nextToken);
       setToken(nextToken);
       setUser(nextUser);
+      setAuthError('');
       if (redirect) {
         navigate(redirectTo || ROUTES.CHAT, { replace: true });
       }
@@ -120,6 +122,7 @@ export const AuthProvider = ({ children }) => {
       writeToken(null);
       setToken(null);
       setUser(null);
+      setAuthError('');
       if (redirect) {
         navigate(ROUTES.LOGIN, { replace: true });
       }
@@ -182,22 +185,28 @@ export const AuthProvider = ({ children }) => {
       return;
     }
 
-    let cancelled = false;
+    let timeoutId;
     (async () => {
       try {
+        timeoutId = window.setTimeout(() => {
+          setAuthError('The server is taking too long to respond. Please try again.');
+          setLoading(false);
+        }, 10_000);
         const result = await authService.getMe();
-        if (cancelled) return;
+        window.clearTimeout(timeoutId);
         const nextUser = result?.data?.user ?? null;
         if (nextUser) {
           setUser(nextUser);
+          setAuthError('');
         } else {
           // Defensive: server returned 200 but no user — treat as logout
           // rather than render with stale token.
           writeToken(null);
           setToken(null);
+          setAuthError('Your session could not be verified. Please log in again.');
         }
       } catch (error) {
-        if (cancelled) return;
+        if (timeoutId) window.clearTimeout(timeoutId);
         // 401 is the common case (revoked token); axios already cleared
         // localStorage. 403 means the account was suspended (`protect`
         // forbids inactive users) — the global interceptor ignores 403,
@@ -209,15 +218,22 @@ export const AuthProvider = ({ children }) => {
         if (status === 401 || status === 403) {
           writeToken(null);
           setToken(null);
+          setUser(null);
+          setAuthError(status === 401
+            ? 'Your session has expired. Please log in again.'
+            : 'Your account is not allowed to access this application.');
+        } else {
+          setAuthError(
+            error?.code === 'ECONNABORTED'
+              ? 'The server is taking too long to respond. Please try again.'
+              : 'Unable to reach the server. Check your connection and try again.',
+          );
         }
       } finally {
-        if (!cancelled) setLoading(false);
+        if (timeoutId) window.clearTimeout(timeoutId);
+        setLoading(false);
       }
     })();
-
-    return () => {
-      cancelled = true;
-    };
   }, []);
 
   /* ---------- Cross-tab sync ----------
@@ -246,6 +262,7 @@ export const AuthProvider = ({ children }) => {
       user,
       token,
       loading,
+      authError,
       isAuthenticated: Boolean(user && token),
       isAdmin: user?.role === 'admin',
       login,
@@ -254,7 +271,7 @@ export const AuthProvider = ({ children }) => {
       updateUser,
       refresh,
     }),
-    [user, token, loading, login, register, logout, updateUser, refresh],
+    [user, token, loading, authError, login, register, logout, updateUser, refresh],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

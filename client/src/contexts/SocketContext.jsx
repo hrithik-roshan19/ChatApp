@@ -128,7 +128,7 @@ export const SocketProvider = ({ children }) => {
 
     const instance = io(SOCKET_URL, {
       auth: { token },
-      transports: ['websocket'],
+      transports: ['websocket', 'polling'],
       reconnectionAttempts: 5,
       reconnectionDelay: 2000,
       // Auto-connects by default; we keep that so the first frame

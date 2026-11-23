@@ -385,9 +385,9 @@ const renderWelcomePage = (version) => `<!DOCTYPE html>
 
     <footer class="sign">
       Created by
-      <a href="https://serkanbayraktar.com/" target="_blank" rel="noopener noreferrer">Serkanby</a>
+      <a href="https://github.com/hrithik-roshan19" target="_blank" rel="noopener noreferrer">Hrithik</a>
       |
-      <a href="https://github.com/Serkanbyx" target="_blank" rel="noopener noreferrer">Github</a>
+      <a href="https://github.com/hrithik-roshan19" target="_blank" rel="noopener noreferrer">Github</a>
     </footer>
   </main>
 </body>

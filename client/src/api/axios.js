@@ -15,7 +15,7 @@ import { STORAGE_KEYS } from '../utils/constants.js';
  *     being so aggressive that legitimate uploads get killed.
  */
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: import.meta.env.VITE_API_URL || '/api',
   withCredentials: false,
   timeout: 15_000,
 });
