@@ -45,19 +45,19 @@ const Footer = ({ className = '' }) => {
         <span>
           Created by{' '}
           <a
-            href="https://serkanbayraktar.com/"
+            href="https://github.com/hrithik-roshan19"
             target="_blank"
             rel="noopener noreferrer"
             className="font-medium text-brand-600 underline-offset-2 transition-colors hover:text-brand-700 hover:underline dark:text-brand-400 dark:hover:text-brand-300"
           >
-            Serkanby
+            Hrithik
           </a>
         </span>
         <span aria-hidden="true" className="text-gray-300 dark:text-gray-700">
           |
         </span>
         <a
-          href="https://github.com/Serkanbyx"
+          href="https://github.com/hrithik-roshan19"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="GitHub profile of Serkanby"
