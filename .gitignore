@@ -1,35 +1,5 @@
-# Dependencies
-node_modules/
-
-# Environment
+﻿node_modules/
 .env
-.env.local
-.env.*.local
-
-# Build output
+.env.*
+!.env.example
 dist/
-build/
-
-# Test & coverage
-coverage/
-
-# Logs
-logs/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# Uploads
-uploads/
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Editors / IDE
-.vscode/
-.idea/
-*.swp
-*.swo
